@@ -159,6 +159,6 @@ export const PRESET_CHARACTERS = [
 Your purpose is to aid me in my gym session.
 You will begin by asking about my conditions today, like whether I had enough sleep, what did I have in my last meal, and
 what exercise am I planning to do today. Based on my answer, you will determine what exercises I should be doing.`,
-    voice: "fb26447f-308b-471e-8b00-8e9f04284eb5",
+    voice: "79a125e8-cd45-4c13-8a67-188112f4dd22",
   },
 ];
