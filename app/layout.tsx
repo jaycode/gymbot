@@ -34,7 +34,7 @@ export default function RootLayout({
         <main className="w-full flex items-center justify-center bg-primary-200 p-4 bg-[length:auto_50%] lg:bg-auto bg-colorWash bg-no-repeat bg-right-top">
 
           <nav>
-            <Link href="/">Home</Link> | <Link href="/gym">Start Session</Link> | <Link href="/log">Gym Log</Link>
+            <Link href="/">Home</Link> | <Link href="/gym">Start Session</Link> | <Link href="/log">Gym Log</Link> | <Link href="/spotifylogin">Spotify Login</Link>
           </nav>
           {children}
         </main>

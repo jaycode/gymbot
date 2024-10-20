@@ -61,7 +61,6 @@ main {
   display: flex;
   flex-direction: column;
   flex: 1;
-  height: 100dvh;
 }
 
 #app {
@@ -148,4 +147,10 @@ dialog::backdrop {
 #tray {
   overflow: hidden;
   height: 100dvh;
+}
+
+/* Custom */
+
+.album-art {
+  height: 2.5em;
 }
