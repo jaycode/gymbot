@@ -272,7 +272,7 @@ export const ConfigSelect: React.FC<ConfigSelectProps> = ({
               </AccordionContent>
             </AccordionItem>
           )}
-          <AccordionItem value="llm">
+          {/* <AccordionItem value="llm">
             <AccordionTrigger>LLM options</AccordionTrigger>
             <AccordionContent>
               <Field error={false}>
@@ -324,7 +324,7 @@ export const ConfigSelect: React.FC<ConfigSelectProps> = ({
                 </Select>
               </Field>
             </AccordionContent>
-          </AccordionItem>
+          </AccordionItem> */}
           <AccordionItem value="voice">
             <AccordionTrigger>Voice config</AccordionTrigger>
             <AccordionContent>
