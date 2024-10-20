@@ -4,7 +4,7 @@
 }
 
 .agentWindow {
-  min-width: 400px;
+  min-width: 300px;
   aspect-ratio: 1;
   background: theme(colors.primary.300);
   border-radius: theme(borderRadius.2xl);

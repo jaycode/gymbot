@@ -154,3 +154,25 @@ dialog::backdrop {
 .album-art {
   height: 2.5em;
 }
+
+/* Ensure the video container has a fixed height */
+.video-container {
+  width: 640px;
+  height: 480px;
+  margin-top: 16px;
+  position: relative; /* Make sure buttons or layout don't shift */
+  margin-bottom:10px;
+}
+
+/* Hidden video element still takes up space */
+.video-off {
+  opacity: 50%;
+  width: 100%; 
+  height: 100%; 
+  background-color: #000;
+}
+
+/* Shown video element is visible */
+.video-on {
+  opacity: 100%;
+}

@@ -46,11 +46,11 @@ export default function UserMicBubble({
       <div className={`${styles.bubble} ${cx}`} onClick={() => handleMute()}>
         <div className={styles.icon}>
           {!active ? (
-            <Pause size={42} className="size-8 md:size-10" />
+            <Pause size={32} className="size-6 md:size-10" />
           ) : canTalk ? (
-            <Mic size={42} className="size-8 md:size-10" />
+            <Mic size={32} className="size-6 md:size-10" />
           ) : (
-            <MicOff size={42} className="size-8 md:size-10" />
+            <MicOff size={32} className="size-6 md:size-10" />
           )}
         </div>
         {canTalk && <AudioIndicatorBubble />}

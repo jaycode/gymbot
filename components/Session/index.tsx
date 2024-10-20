@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { LineChart, Loader2, LogOut, Settings, StopCircle } from "lucide-react";
+import { LineChart, Loader2, LogOut, Settings, StopCircle, Video } from "lucide-react"; // Added Video icon
 import {
   PipecatMetrics,
   TransportState,
@@ -26,10 +26,11 @@ interface SessionProps {
   onLeave: () => void;
   openMic?: boolean;
   startAudioOff?: boolean;
+  setIsCameraOn: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const Session = React.memo(
-  ({ state, onLeave, startAudioOff = false }: SessionProps) => {
+  ({ state, onLeave, startAudioOff = false, setIsCameraOn }: SessionProps) => {
     const voiceClient = useVoiceClient()!;
     const [hasStarted, setHasStarted] = useState<boolean>(false);
     const [showConfig, setShowConfig] = useState<boolean>(false);
@@ -40,11 +41,16 @@ export const Session = React.memo(
     >(null);
     const [updatingConfig, setUpdatingConfig] = useState<boolean>(false);
 
-    const modalRef = useRef<HTMLDialogElement>(null);
-    //const bingSoundRef = useRef<HTMLAudioElement>(null);
-    //const bongSoundRef = useRef<HTMLAudioElement>(null);
+    // Camera control state
+    const [isCameraOn, setIsCameraOnLocal] = useState<boolean>(false);
+    const videoRef = useRef<HTMLVideoElement | null>(null);
 
-    // ---- Voice Client Events
+    const modalRef = useRef<HTMLDialogElement>(null);
+
+    function toggleCamera() {
+      setIsCameraOnLocal((prev) => !prev);
+      setIsCameraOn((prev) => !prev); // Update the state in the parent component
+    }
 
     useVoiceClientEvent(
       VoiceEvent.Metrics,
@@ -59,11 +65,6 @@ export const Session = React.memo(
       VoiceEvent.BotStoppedSpeaking,
       useCallback(() => {
         if (hasStarted) return;
-
-        /*if (bingSoundRef.current) {
-          bingSoundRef.current.volume = 0.5;
-          bingSoundRef.current.play();
-        }*/
         setHasStarted(true);
       }, [hasStarted])
     );
@@ -71,46 +72,32 @@ export const Session = React.memo(
     useVoiceClientEvent(
       VoiceEvent.UserStoppedSpeaking,
       useCallback(() => {
-        /*if (bongSoundRef.current) {
-          bongSoundRef.current.volume = 0.5;
-          bongSoundRef.current.play();
-        }*/
-
         if (hasStarted) return;
         setHasStarted(true);
       }, [hasStarted])
     );
 
-    // ---- Effects
-
     useEffect(() => {
-      // Reset started state on mount
       setHasStarted(false);
     }, []);
 
     useEffect(() => {
-      // If we joined unmuted, enable the mic once in ready state
       if (!hasStarted || startAudioOff) return;
       voiceClient.enableMic(true);
     }, [voiceClient, startAudioOff, hasStarted]);
 
     useEffect(() => {
-      // Create new stats aggregator on mount (removes stats from previous session)
       stats_aggregator = new StatsAggregator();
     }, []);
 
     useEffect(() => {
-      // Leave the meeting if there is an error
       if (state === "error") {
         onLeave();
       }
     }, [state, onLeave]);
 
     useEffect(() => {
-      // Modal effect
-      // Note: backdrop doesn't currently work with dialog open, so we use setModal instead
       const current = modalRef.current;
-
       if (current && showConfig) {
         current.inert = true;
         current.showModal();
@@ -153,7 +140,6 @@ export const Session = React.memo(
                   if (!runtimeConfigUpdate) return;
                   setUpdatingConfig(true);
                   await voiceClient.updateConfig(runtimeConfigUpdate);
-                  // On update, reset state
                   setUpdatingConfig(false);
                   setRuntimeConfigUpdate(null);
                   setShowConfig(false);
@@ -175,24 +161,7 @@ export const Session = React.memo(
             document.getElementById("tray")!
           )}
 
-        <div className="flex-1 flex flex-col items-center justify-center w-full">
-          <Card.Card
-            fullWidthMobile={false}
-            className="w-full max-w-[320px] sm:max-w-[420px] mt-auto shadow-long"
-          >
-            <Agent
-              isReady={state === "ready"}
-              statsAggregator={stats_aggregator}
-            />
-          </Card.Card>
-          <UserMicBubble
-            active={hasStarted}
-            muted={muted}
-            handleMute={() => toggleMute()}
-          />
-        </div>
-
-        <footer className="w-full flex flex-row mt-auto self-end md:w-auto">
+        <div className="mb-5 w-full flex flex-row mt-auto self-end md:w-auto">
           <div className="flex flex-row justify-between gap-3 w-full md:w-auto">
             <Tooltip>
               <TooltipContent>Interrupt bot</TooltipContent>
@@ -213,18 +182,20 @@ export const Session = React.memo(
               </TooltipTrigger>
             </Tooltip>
 
+            {/* Toggle Camera Button */}
             <Tooltip>
-              <TooltipContent>Show bot statistics panel</TooltipContent>
+              <TooltipContent>Toggle Camera</TooltipContent>
               <TooltipTrigger asChild>
                 <Button
-                  variant={showStats ? "light" : "ghost"}
+                  variant={isCameraOn ? "light" : "ghost"}
                   size="icon"
-                  onClick={() => setShowStats(!showStats)}
+                  onClick={toggleCamera}
                 >
-                  <LineChart />
+                  <Video />
                 </Button>
               </TooltipTrigger>
             </Tooltip>
+
             <Tooltip>
               <TooltipContent>Configure</TooltipContent>
               <TooltipTrigger asChild>
@@ -240,14 +211,29 @@ export const Session = React.memo(
                 </Button>
               </TooltipTrigger>
             </Tooltip>
+
             <Button onClick={() => onLeave()} className="ml-auto">
               <LogOut size={16} />
               End
             </Button>
           </div>
+        </div>
+        <footer className="flex-1 flex flex-col items-center justify-center w-full">
+          <Card.Card
+            fullWidthMobile={false}
+            className="mb-5 w-full max-w-[240px] sm:max-w-[320px] mt-auto shadow-long"
+          >
+            <Agent
+              isReady={state === "ready"}
+              statsAggregator={stats_aggregator}
+            />
+          </Card.Card>
+          <UserMicBubble
+            active={hasStarted}
+            muted={muted}
+            handleMute={() => toggleMute()}
+          />
         </footer>
-        {/*audio ref={bingSoundRef} src="/bing.wav" />
-        <audio ref={bongSoundRef} src="/bong.wav" /> */}
       </>
     );
   },

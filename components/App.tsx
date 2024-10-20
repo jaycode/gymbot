@@ -23,7 +23,11 @@ const status_text = {
   connecting: "Connecting...",
 };
 
-export default function App() {
+interface AppProps {
+  setIsCameraOn: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function App({ setIsCameraOn }: AppProps) {
   const voiceClient = useVoiceClient()!;
   const transportState = useVoiceClientTransportState();
 
@@ -108,6 +112,7 @@ export default function App() {
         state={transportState}
         onLeave={() => leave()}
         startAudioOff={startAudioOff}
+        setIsCameraOn={setIsCameraOn}
       />
     );
   }
