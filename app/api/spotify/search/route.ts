@@ -66,8 +66,6 @@ export async function POST(request: NextRequest) {
 
         allTracks = [...allTracks, ...nextPageTracks];
       }
-      console.log("HELLO");
-      console.log(allTracks);
 
       return NextResponse.json({ tracks: allTracks });
     }
@@ -90,17 +88,13 @@ export async function POST(request: NextRequest) {
         if (albumName) query += `album:${albumName}`;
 
         const trackResult = await spotifyApi.searchTracks(query);
-        console.log("HELLO");
-        console.log(trackResult.body.tracks.items);
         const tracks = trackResult.body.tracks.items.map(track => ({
-        name: track.name,
-        uri: track.uri,
-        album: track.album.name,
-        artists: track.artists.map(artist => artist.name),
-        duration_ms: track.duration_ms,
+          name: track.name,
+          uri: track.uri,
+          album: track.album.name,
+          artists: track.artists.map(artist => artist.name),
+          duration_ms: track.duration_ms,
         }));
-
-        console.log(tracks);
 
         return NextResponse.json({ tracks });
     }

@@ -67,10 +67,80 @@ export const defaultServices = {
 // Your responses will converted to audio. Please do not include any special characters in your response other than '!' or '?'.
 // Start by briefly introducing yourself.`;
 
-export const defaultLLMPrompt = `You are a personal trainer called GymBot.
-Your purpose is to aid me in my gym session.
-You will begin by asking about my conditions today, like whether I had enough sleep, what did I have in my last meal, and
-what exercise am I planning to do today. Based on my answer, you will determine what exercises I should be doing.`;
+const spotifyPlayByArtist = {
+  name: "spotify_play_by_artist",
+  description: "Play music in Spotify by artists",
+  parameters: {
+    type: "string",
+    properties: {
+      artist: {
+        type: "string",
+        description: "The name of the artist(s).",
+      },
+    },
+    required: ["artist"],
+  },
+};
+
+const spotifyPlayLikedSongs = {
+  name: "spotify_play_liked_songs",
+  description: "Play my liked songs in Spotify",
+  parameters: {
+    type: "string",
+    properties: {
+      playlist: {
+        type: "string",
+        description: "The value of this parameter is always 'liked songs'",
+      },
+    },
+    required: ["playlist"],
+  },
+};
+
+const postureCorrection = {
+  name: "posture_correction",
+  description: "Correct my posture as I am exercising",
+  parameters: {
+    type: "string",
+    properties: {
+      posedata: {
+        type: "matrix",
+        description: "A matrix of pose data points accumulated during a workout routine",
+      },
+    },
+    required: ["posedata"],
+  },
+};
+
+export const defaultLLMPrompt = `
+You have access to the following functions:
+
+- Use the function '${spotifyPlayByArtist["name"]}' to '${spotifyPlayByArtist['description']}': 
+  ${JSON.stringify(spotifyPlayByArtist)}
+- Use the function '${spotifyPlayLikedSongs["name"]}' to '${spotifyPlayLikedSongs['description']}':
+  ${JSON.stringify(spotifyPlayLikedSongs)}
+- Use the function '${postureCorrection["name"]}' to '${postureCorrection['description']}':
+  ${JSON.stringify(postureCorrection)}
+
+If you choose to call a function ONLY reply in the following format with no prefix or suffix:
+
+<function=example_function_name>{{\"example_name\": \"example_value\"}}</function>
+
+Reminder:
+- Function calls MUST follow the specified format, start with <function= and end with </function>
+- Required parameters MUST be specified
+- Only call one function at a time
+- Put the entire function call reply on one line
+- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls
+
+You are a personal trainer named GymBot. Your job is to:
+
+1. Answer questions regarding workout, nutrition, and lifestyle health in general.
+2. Answer questions regarding my postures when exercising. Remind me to enable pose detection to help you compare the movements with the correct movements. 
+3. Operate my Spotify app to play particular songs. You can call the functions above to operate Spotify.
+
+You don't need to tell me if you're going to call a function; just do it directly.
+`;
 
 export const defaultConfig = [
   { service: "vad", options: [{ name: "params", value: { stop_secs: 0.3 } }] },
@@ -98,6 +168,31 @@ export const defaultConfig = [
       { name: "run_on_config", value: true },
     ],
   },
+
+//   {
+//     service: "llm",
+//     options: [
+//       { name: "model", value: "GPT-4o" },
+//       {
+//         name: "initial_messages",
+//         value: [
+//           {
+//             role: "system",
+//             content: `
+// You are a personal trainer named GymBot. Your job is to:
+
+// 1. Answer questions regarding workout, nutrition, and lifestyle health in general.
+// 2. When I need, I'm going to ask you questions regarding my posture when doing an exercise.
+// 3. Operate my Spotify app to play particular songs. You can call the functions above to operate Spotify.
+
+// You don't need to tell me if you're going to call a function; just do it directly.
+// `,
+//           },
+//         ],
+//       },
+//       { name: "run_on_config", value: true },
+//     ],
+//   },
   {
     service: "stt",
     options: [
@@ -155,9 +250,10 @@ export const LLM_MODEL_CHOICES = [
 export const PRESET_CHARACTERS = [
   {
     name: "Gymbot",
-    prompt: `You are a personal trainer called GymBot.
-Your purpose is to aid me in my gym session. Tell me that I can either ask you any fitness tips, or examine and make corrections of my workout pose,
-but you'll need a video access for it, or I can ask you to operate my Spotify app`,
+//     prompt: `You are a personal trainer called GymBot.
+// Your purpose is to aid me in my gym session. Tell me that I can either ask you any fitness tips, or examine and make corrections of my workout pose,
+// but you'll need a video access for it, or I can ask you to operate my Spotify app`,
+    prompt: "Just say hello",
     voice: "79a125e8-cd45-4c13-8a67-188112f4dd22",
   },
 ];

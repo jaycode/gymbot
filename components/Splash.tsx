@@ -26,17 +26,16 @@ export const Splash: React.FC = () => {
       </h1>
 
       <p className="text-primary-500 text-xl font-semibold leading-relaxed">
-        {/* Add any description here */}
+        To get advice on improving your workout posture, Start a Gym Session, turn on the camera, and turn on pose estimation.<br />
+        To view your progress, go to My Gym Log.
       </p>
-
-      {/* Replaced navigate with Next.js Link */}
-
-      <Button asChild>
-        <Link href="/gym-log">My Gym Log</Link>
-      </Button>
 
       <Button asChild>
         <Link href="/gym">Start a Gym Session</Link>
+      </Button>
+      
+      <Button asChild>
+        <Link href="/gym-log">My Gym Log</Link>
       </Button>
 
       {accessToken ? (

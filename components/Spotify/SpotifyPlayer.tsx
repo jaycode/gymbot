@@ -56,8 +56,6 @@ export default function SpotifyPlayer() {
       });
 
       const data = await res.json();
-      console.log("DATA:");
-      console.log(data);
 
       if (res.ok) {
         // Update search results with tracks or playlists
@@ -78,16 +76,12 @@ export default function SpotifyPlayer() {
   };
 
   const handlePlay = async () => {
-    console.log("1")
     if (!selectedTrackUri) return;
 
-    console.log("2")
     setLoading(true);
     setResponse(null);
-    console.log("3")
 
     try {
-      console.log("4")
 
       const res = await fetch('/api/spotify/play', {
         method: 'POST',
@@ -96,8 +90,6 @@ export default function SpotifyPlayer() {
         },
         body: JSON.stringify(queryType === 'query' || playlistName.toLowerCase() === 'liked songs' ? { trackUri: selectedTrackUri } : { playlistUri: selectedTrackUri }),
       });
-      console.log("5");
-      console.log(res);
 
       if (res.ok) {
         setIsPlaying(true); // Set isPlaying to true when something is played

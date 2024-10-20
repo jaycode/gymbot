@@ -27,7 +27,7 @@ const Prompt: React.FC<PromptProps> = ({
     (async function getPrompt() {
       const llmHelper = voiceClient.getHelper("llm") as LLMHelper;
       const p: LLMContextMessage[] = await llmHelper.getContext();
-
+      console.log("PROMPT");
       if (!p || !p.length) return;
 
       setPrompt(p);
@@ -37,6 +37,7 @@ const Prompt: React.FC<PromptProps> = ({
   useVoiceClientEvent(VoiceEvent.ConfigUpdated, async () => {
     const llmHelper = voiceClient.getHelper("llm") as LLMHelper;
     const p: LLMContextMessage[] = await llmHelper.getContext();
+    console.log("PROMPT1");
 
     setPrompt(p);
   });
